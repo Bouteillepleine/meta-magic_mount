@@ -3,6 +3,6 @@ metamodule=1
 name=Magic Mount
 version=version
 versionCode=versionCode
-author=7a72
+author=7a72, XxxY
 description=An implementation of a metamodule using Magic Mount
 updateJson=updateJson

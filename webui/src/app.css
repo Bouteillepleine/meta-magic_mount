@@ -1,50 +1,63 @@
 /* For KernelSU WebUI */
 @import url("https://mui.kernelsu.org/internal/insets.css");
 
-/* ------- Nord Base Colors ------- */
+/* ------- Palette (dark, default) -------
+   Kept the --nordN variable names so nothing else needs to change; the VALUES
+   now follow the KernelNoSU dark/aurora look:
+     nord0 = page bg     nord1 = card bg      nord2 = borders/lines
+     nord3 = hover surface   nord4 = muted text   nord5 = brighter muted
+     nord6 = main text   nord7 = logo gradient stop
+     nord8 = accent (primary)   nord9 = accent hover   nord10 = accent alt
+     nord11 = bad/error   nord12 = warn   nord13 = warn-alt   nord14 = ok/success
+     nord15 = tertiary (purple)
+*/
 :root {
-  --nord0: #2e3440;
-  --nord1: #3b4252;
-  --nord2: #434c5e;
-  --nord3: #4c566a;
+  --nord0: #0d0f13;
+  --nord1: #161a20;
+  --nord2: #2b323c;
+  --nord3: #333c48;
 
-  --nord4: #d8dee9;
-  --nord5: #e5e9f0;
-  --nord6: #eceff4;
+  --nord4: #b3bcc9;
+  --nord5: #c7d0dc;
+  --nord6: #f4f7fb;
 
-  --nord7: #8fbcbb;
-  --nord8: #88c0d0;
-  --nord9: #81a1c1;
-  --nord10: #5e81ac;
+  --nord7: #7aa2ff;
+  --nord8: #5b8cff;
+  --nord9: #7c9dff;
+  --nord10: #3f5fd9;
 
-  --nord11: #bf616a;
-  --nord12: #d08770;
-  --nord13: #ebcb8b;
-  --nord14: #a3be8c;
+  --nord11: #ff6b6f;
+  --nord12: #f0a92e;
+  --nord13: #f0a92e;
+  --nord14: #3ecf7a;
   --nord15: #b48ead;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --nord0: #eceff4;
-    --nord1: #e5e9f0;
-    --nord2: #d8dee9;
-    --nord3: #c0c5ce;
+    --nord0: #f4f5f7;
+    --nord1: #ffffff;
+    --nord2: #e6e8ec;
+    --nord3: #eef1f6;
 
-    --nord4: #4c566a;
-    --nord5: #434c5e;
-    --nord6: #2e3440;
+    --nord4: #6b7280;
+    --nord5: #4c566a;
+    --nord6: #14171c;
 
-    --nord7: #8fbcbb;
-    --nord8: #5e81ac;
-    --nord9: #81a1c1;
-    --nord10: #4c566a;
+    --nord7: #7aa2ff;
+    --nord8: #2f6bff;
+    --nord9: #4c82ff;
+    --nord10: #2354d6;
 
-    --nord11: #bf616a;
-    --nord12: #d08770;
-    --nord13: #ebcb8b;
-    --nord14: #a3be8c;
+    --nord11: #e5484d;
+    --nord12: #d68309;
+    --nord13: #d68309;
+    --nord14: #12a150;
     --nord15: #b48ead;
+
+    --shadow: 0 1px 2px rgba(20, 23, 28, 0.06), 0 6px 20px rgba(20, 23, 28, 0.06);
   }
 }
 
@@ -53,14 +66,21 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   padding-top: var(--window-inset-top, 0px);
   padding-bottom: var(--window-inset-bottom, 0px);
   margin: 0;
   color: var(--nord6);
+  background: var(--nord0);
   font-family:
-    -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, "Segoe UI", Arial,
-    sans-serif;
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "SF Pro Text",
+    Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 .app-root {
@@ -69,33 +89,69 @@ body {
   height: calc(
     100vh - var(--window-inset-top, 0px) - var(--window-inset-bottom, 0px)
   );
+  max-width: 640px;
+  margin: 0 auto;
+  position: relative;
 }
 
-.app-main {
-  background: var(--nord0);
+/* Aurora background, matching KernelNoSU: fixed, blurred radial gradients
+   drifting slowly behind everything. Pure CSS, no JS needed. */
+.app-root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(60px) saturate(1.15);
+  opacity: 0.42;
+  will-change: transform;
+  background:
+    radial-gradient(38% 30% at 20% 12%, color-mix(in srgb, var(--nord8) 65%, transparent), transparent 70%),
+    radial-gradient(32% 28% at 85% 8%, color-mix(in srgb, var(--nord14) 48%, transparent), transparent 70%),
+    radial-gradient(44% 40% at 60% 96%, color-mix(in srgb, var(--nord8) 40%, transparent), transparent 72%);
+  animation: drift 22s ease-in-out infinite alternate;
 }
 
-/* Top bar for language selector */
+@media (prefers-color-scheme: light) {
+  .app-root::before {
+    opacity: 0.5;
+  }
+}
+
+@keyframes drift {
+  from { transform: translate3d(-3%, -2%, 0); }
+  to { transform: translate3d(3%, 3%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-root::before {
+    animation: none;
+  }
+}
+
+/* Top bar for title + language selector */
 .top-bar {
-  height: 44px;
+  height: 52px;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
   padding: 0 16px;
-  background: var(--nord1);
+  background: transparent;
   border-bottom: 1px solid var(--nord2);
+  position: relative;
+  z-index: 1;
 }
 
 /* Language dropdown container */
 .lang-dropdown {
   position: relative;
+  margin-left: auto;
 }
 
 .lang-select {
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: 11px;
   border: 1px solid var(--nord2);
-  background: var(--nord0);
+  background: var(--nord1);
   color: var(--nord6);
   font-size: 13px;
   outline: none;
@@ -106,16 +162,18 @@ body {
   min-width: 100px;
   justify-content: space-between;
   transition: 0.15s;
+  box-shadow: var(--shadow);
 }
 
 .lang-select:hover {
-  background: var(--nord2);
+  border-color: var(--nord8);
 }
 
 .lang-select .arrow {
   font-size: 10px;
   transition: transform 0.2s;
   display: inline-block;
+  color: var(--nord4);
 }
 
 .lang-select .arrow.open {
@@ -126,9 +184,9 @@ body {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  background: var(--nord0);
+  background: var(--nord1);
   border: 1px solid var(--nord2);
-  border-radius: 8px;
+  border-radius: 11px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   min-width: 100px;
@@ -149,13 +207,13 @@ body {
 }
 
 .lang-option:hover {
-  background: var(--nord2);
+  background: var(--nord3);
 }
 
 .lang-option.active {
   background: var(--nord8);
-  color: var(--nord0);
-  font-weight: 600;
+  color: #fff;
+  font-weight: 650;
 }
 
 /* Main content */
@@ -164,20 +222,50 @@ body {
   padding: 16px 16px 64px;
   overflow-y: auto;
   position: relative;
+  z-index: 1;
 }
 
 /* ---------- Card ---------- */
 .card {
   background: var(--nord1);
-  border-radius: 12px;
+  border: 1px solid var(--nord2);
+  border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---------- Sheen: a soft highlight glides across the card with device tilt
+   or pointer position, same effect as the KernelNoSU module WebUI. No card
+   rotation (so scrolling stays fluid and layout never shifts) - just a
+   radial highlight tracked via --gx/--gy, set from App.svelte. ---------- */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: radial-gradient(
+    180px 180px at var(--gx, 50%) var(--gy, 0%),
+    rgba(255, 255, 255, 0.13),
+    transparent 60%
+  );
+}
+
+.sheen .card::after {
+  opacity: 1;
 }
 
 .card h2 {
   margin-top: 0;
   margin-bottom: 12px;
   color: var(--nord6);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
 }
 
 /* ---------- Form fields ---------- */
@@ -190,81 +278,104 @@ body {
 
 .field label,
 .field .field-label {
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--nord4);
+  font-weight: 600;
 }
 
 input,
 select {
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 9px 12px;
+  border-radius: 11px;
   border: 1px solid var(--nord2);
   background: var(--nord0);
   color: var(--nord6);
   font-size: 14px;
   outline: none;
+  transition: 0.15s;
+}
+
+input::placeholder {
+  color: var(--nord4);
+  opacity: 0.7;
 }
 
 input:focus,
 select:focus {
   border-color: var(--nord8);
-  box-shadow: 0 0 0 2px rgba(136, 192, 208, 0.2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nord8) 22%, transparent);
 }
 
 /* ---------- Buttons ---------- */
 button {
   border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  background: var(--nord2);
+  border-radius: 12px;
+  padding: 10px 16px;
+  background: var(--nord3);
   color: var(--nord6);
   cursor: pointer;
   font-size: 14px;
-  transition: 0.15s;
+  font-weight: 650;
+  transition: 0.12s;
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--nord6) 14%, transparent),
+    0 7px 16px rgba(0, 0, 0, 0.16);
 }
 
 button:hover {
-  background: var(--nord3);
+  background: var(--nord2);
+}
+
+button:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--nord6) 14%, transparent);
 }
 
 button.primary {
-  background: var(--nord8);
-  color: var(--nord0);
+  background: linear-gradient(145deg, var(--nord8), var(--nord9));
+  color: #fff;
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--nord8) 55%, #000),
+    0 9px 20px color-mix(in srgb, var(--nord8) 38%, transparent);
 }
 
 button.primary:hover {
-  background: var(--nord9);
+  filter: brightness(1.05);
 }
 
 button:disabled {
   opacity: 0.5;
   cursor: default;
+  transform: none;
 }
 
 /* ---------- Actions (centered) ---------- */
 .actions {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   margin-top: 16px;
   margin-bottom: 8px;
 }
 
+.actions button {
+  flex: 1;
+}
+
 /* ---------- Text helpers ---------- */
 .hint {
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--nord4);
   margin: 4px 0 8px;
 }
 
 .error {
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--nord11);
   margin-top: 4px;
+  font-weight: 600;
 }
 
 .path {
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--nord4);
   margin-top: 4px;
 }
@@ -272,81 +383,118 @@ button:disabled {
 /* ---------- Log viewer ---------- */
 .log-view {
   margin-top: 12px;
-  padding: 12px;
+  padding: 12px 13px;
   background: var(--nord0);
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--nord2);
-  color: var(--nord6);
+  color: var(--nord5);
   max-height: 55vh;
   overflow-y: auto;
   font-size: 12px;
-  font-family: monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
-/* ---------- Bottom Tabs ---------- */
+/* ---------- Bottom Tabs (floating glass capsule) ----------
+   Same recipe as the ReSukiSU manager's capsule bar: translucent body (not an
+   opaque surface) + backdrop blur + a soft rim gradient border + an inner
+   sheen highlight along the top edge, so it reads as glass rather than a flat
+   solid bar. Unlike the native manager, backdrop-filter is plain CSS here -
+   the WebView supports it directly, no extra enablement needed. */
 .bottom-bar {
   position: fixed;
-  bottom: var(--window-inset-bottom, 0px);
-  left: 0;
-  right: 0;
-  height: 52px;
-  background: var(--nord1);
+  bottom: calc(var(--window-inset-bottom, 0px) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(600px, calc(100% - 24px));
+  height: 60px;
   display: flex;
-  border-top: 1px solid var(--nord2);
+  z-index: 2;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--nord1) 62%, transparent);
+  backdrop-filter: blur(22px) saturate(1.6);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  border: 1px solid color-mix(in srgb, var(--nord6) 14%, transparent);
+  box-shadow: var(--shadow), 0 10px 28px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.bottom-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #fff 14%, transparent),
+    transparent 55%
+  );
 }
 
 .tab-btn {
   flex: 1;
   background: transparent;
-  border-radius: 0;
-  color: var(--nord6);
+  border-radius: 14px;
+  margin: 6px;
+  color: var(--nord4);
+  font-weight: 650;
+  box-shadow: none;
+  position: relative;
+  z-index: 1;
+}
+
+.tab-btn:active {
+  transform: none;
 }
 
 .tab-btn.active {
-  background: var(--nord2);
+  background: color-mix(in srgb, var(--nord8) 22%, transparent);
+  color: var(--nord8);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--nord8) 40%, transparent);
 }
 
-/* ---------- loglevel Switch ---------- */
+/* ---------- loglevel Switch (segmented control) ---------- */
 .loglevel-switch {
   display: flex;
   width: 100%;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid var(--nord2);
   background: var(--nord0);
+  padding: 3px;
+  gap: 3px;
 }
 
 .lv-btn {
   flex: 1;
-  padding: 10px 0;
+  padding: 9px 0;
   text-align: center;
-  background: var(--nord1);
-  color: var(--nord6);
+  background: transparent;
+  color: var(--nord4);
   border: none;
   cursor: pointer;
   transition: 0.15s;
-  font-size: 14px;
-  border-radius: 0;
+  font-size: 13.5px;
+  font-weight: 650;
+  border-radius: 9px;
+  box-shadow: none;
 }
 
-.lv-btn:first-child {
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-}
-
-.lv-btn:last-child {
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+.lv-btn:active {
+  transform: none;
 }
 
 .lv-btn:hover {
-  background: var(--nord2);
+  color: var(--nord6);
 }
 
 .lv-btn.active {
   background: var(--nord8);
-  color: var(--nord0);
+  color: #fff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--nord8) 45%, transparent);
 }
 
 /* ---------- Log select row ---------- */
@@ -361,16 +509,16 @@ button:disabled {
 }
 
 .refresh-btn {
-  padding: 8px 14px;
+  padding: 9px 14px;
   white-space: nowrap;
 }
 
 /* top bar title */
 .title {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 750;
   color: var(--nord6);
-  margin-right: auto;
+  letter-spacing: -0.2px;
 }
 
 /* module row */
@@ -379,33 +527,43 @@ button:disabled {
 }
 
 .module-row {
-  padding: 12px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 4px;
+  border-top: 1px solid var(--nord2);
 }
+
+.module-row:first-child {
+  border-top: 0;
+}
+
 .module-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.module-name {
-  font-size: 15px;
-  overflow: scroll;
-  flex: 1;
-  margin-right: 20px;
+  gap: 10px;
 }
 
-/* switch slider */
+.module-name {
+  font-size: 14.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+/* switch slider (module enable/disable toggle) */
 .switch {
   position: relative;
   display: inline-block;
-  width: 44px;
-  height: 24px;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 28px;
 }
 
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
+  position: absolute;
 }
 
 .slider {
@@ -415,29 +573,32 @@ button:disabled {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #666;
-  transition: 0.3s;
-  border-radius: 24px;
+  background-color: var(--nord2);
+  transition: 0.18s;
+  border-radius: 999px;
+  border: 1px solid var(--nord2);
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.3s;
+  height: 22px;
+  width: 22px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #fff;
+  transition: 0.18s;
   border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 input:checked + .slider {
-  background-color: #4caf50;
+  background-color: var(--nord14);
+  border-color: transparent;
 }
 
 input:checked + .slider:before {
-  transform: translateX(20px);
+  transform: translateX(18px);
 }
 
 /* disabled */
@@ -450,7 +611,7 @@ input:checked + .slider:before {
 .error.small {
   font-size: 12px;
   margin-left: auto;
-  color: #f66;
+  color: var(--nord11);
 }
 
 /* ---------- Tab switching overlay ---------- */

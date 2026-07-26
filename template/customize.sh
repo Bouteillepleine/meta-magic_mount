@@ -3,7 +3,7 @@
 SKIPUNZIP=1
 
 # Module configuration
-module_id="org.zrlab.magic_mount"
+module_id="magic_mount"
 module_data_dir="/data/adb/magic_mount"
 metamodule_link="/data/adb/metamodule"
 

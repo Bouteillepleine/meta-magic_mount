@@ -10,7 +10,7 @@ NC='\033[0m'
 BASE_URL="https://magic-mount.zrlab.org/download"
 UPDATE_JSON_URL="https://magic-mount.zrlab.org/version"
 CHANGELOG_URL="https://magic-mount.zrlab.org/changelog"
-MODULE_ID="org.zrlab.magic_mount"
+MODULE_ID="magic_mount"
 
 # Build state
 BUILD_TYPES=()
