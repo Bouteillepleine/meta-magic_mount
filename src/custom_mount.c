@@ -20,26 +20,82 @@
 #define KSUD_PATH "/data/adb/ksud"
 
 #define KNSU_DIR "/data/adb/modules/kernelnosu"
-/* kernelnosu ships its su binary at system/product/bin/su - the standard
- * per-partition module layout (same convention any module uses to place files
- * under /product, e.g. an overlay APK under system/product/overlay). That lets
- * the su be mounted by the SAME proven module-tree walk that already lands
- * /product content correctly, instead of a bespoke bind: a bolted-on
- * tmpfs+MS_MOVE onto /product/bin failed with EINVAL (see git history) where
- * the engine's own per-node promotion of /product subdirectories succeeds. */
-#define KNSU_SU "/data/adb/modules/kernelnosu/system/product/bin/su"
-#define KNSU_TARGET "/product/bin/su"
+
+/* Read a single trimmed line from a file, or return def if it can't be read.
+ * Used for the target/source paths kernelnosu's own customize.sh writes at
+ * install time (su_target = the final absolute mount path, su_source = the
+ * module-relative storage path) - this keeps both sides in sync regardless of
+ * which partition kernelnosu's auto-detection picked (/product, /system_ext,
+ * /vendor, /odm, or /system as the universal fallback for ROMs without a
+ * separate partition), instead of us hardcoding /product/bin/su here. */
+static const char *read_trimmed_line(const char *path, char *buf, size_t buflen, const char *def) {
+    FILE *fp = fopen(path, "r");
+    if (fp) {
+        if (fgets(buf, (int)buflen, fp)) {
+            size_t len = strlen(buf);
+            while (len > 0 && (buf[len - 1] == '\n' || buf[len - 1] == '\r'))
+                buf[--len] = '\0';
+        } else {
+            buf[0] = '\0';
+        }
+        fclose(fp);
+    } else {
+        buf[0] = '\0';
+    }
+    if (buf[0] == '\0')
+        snprintf(buf, buflen, "%s", def);
+    return buf;
+}
+
+/* Final absolute mount path, e.g. /product/bin/su or /system/bin/su. */
+static const char *knsu_target(void) {
+    static char buf[PATH_MAX];
+    static bool loaded = false;
+    if (!loaded) {
+        char raw[PATH_MAX];
+        read_trimmed_line(KNSU_DIR "/su_target", raw, sizeof(raw), "/system/bin/su");
+        snprintf(buf, sizeof(buf), "%s", raw);
+        loaded = true;
+    }
+    return buf;
+}
+
 /* The directory the engine actually promotes/moves into place for a net-new
  * file (see mm_apply_node_recursive's DIRECTORY case) - registering THIS path
  * for try-umount, not just the file, matches how the engine itself registers
- * a promoted directory. */
-#define KNSU_MOUNT_DIR "/product/bin"
+ * a promoted directory. Derived from knsu_target()'s parent directory. */
+static const char *knsu_mount_dir(void) {
+    static char buf[PATH_MAX];
+    static bool loaded = false;
+    if (!loaded) {
+        snprintf(buf, sizeof(buf), "%s", knsu_target());
+        char *slash = strrchr(buf, '/');
+        if (slash && slash != buf)
+            *slash = '\0';
+        loaded = true;
+    }
+    return buf;
+}
+
+/* Module-relative storage path of the su binary, e.g.
+ * /data/adb/modules/kernelnosu/system/product/bin/su. */
+static const char *knsu_su(void) {
+    static char buf[PATH_MAX];
+    static bool loaded = false;
+    if (!loaded) {
+        char rel[PATH_MAX];
+        read_trimmed_line(KNSU_DIR "/su_source", rel, sizeof(rel), "system/bin/su");
+        snprintf(buf, sizeof(buf), "%s/%s", KNSU_DIR, rel);
+        loaded = true;
+    }
+    return buf;
+}
 
 /* kernelnosu is installed, enabled, and ships a su binary. */
 static bool knsu_active(void) {
     char buf[PATH_MAX];
 
-    if (!path_exists(KNSU_SU))
+    if (!path_exists(knsu_su()))
         return false;
     if (path_join(KNSU_DIR, DISABLE_FILE_NAME, buf, sizeof(buf)) == 0 && path_exists(buf))
         return false;
@@ -264,23 +320,25 @@ void knsu_post_mount(MagicMount *ctx) {
 
     struct stat mounted;
     struct stat source;
+    const char *target = knsu_target();
+    const char *mount_dir = knsu_mount_dir();
 
-    if (stat(KNSU_TARGET, &mounted) == 0 && stat(KNSU_SU, &source) == 0 &&
+    if (stat(target, &mounted) == 0 && stat(knsu_su(), &source) == 0 &&
         mounted.st_size == source.st_size) {
-        LOGI("kernelnosu: real su active at %s", KNSU_TARGET);
-        /* Register the promoted /product/bin mount for KSU's per-app
-         * try-umount, REGARDLESS of the global mm.conf umount= setting: that
-         * setting is intentionally off so KSU doesn't umount every module's
-         * mounts (which broke some modules on this device), but susfs's
+        LOGI("kernelnosu: real su active at %s", target);
+        /* Register the promoted mount dir for KSU's per-app try-umount,
+         * REGARDLESS of the global mm.conf umount= setting: that setting is
+         * intentionally off so KSU doesn't umount every module's mounts
+         * (which broke some modules on this device), but susfs's
          * add_sus_path hiding for non-su app processes only takes effect for
          * mounts actually registered this way - add_sus_path alone (called
          * from kernelnosu's own harden.sh) flags the inode but has nothing to
          * trigger on without this registration. */
-        if (ksu_send_unmountable(KNSU_MOUNT_DIR) == 0)
+        if (ksu_send_unmountable(mount_dir) == 0)
             LOGI("kernelnosu: registered %s for try-umount (hidden from non-su apps)",
-                 KNSU_MOUNT_DIR);
+                 mount_dir);
         else
-            LOGW("kernelnosu: failed to register %s for try-umount", KNSU_MOUNT_DIR);
+            LOGW("kernelnosu: failed to register %s for try-umount", mount_dir);
     } else {
         LOGW("kernelnosu: real su did not land, restoring sucompat fallback");
         set_sucompat(true);
