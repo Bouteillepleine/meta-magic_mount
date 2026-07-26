@@ -117,7 +117,9 @@ body {
   background: var(--md-sys-color-surface);
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
   position: relative;
-  z-index: 1;
+  /* above .app-main (z-index 1) so the language dropdown menu is not painted
+     behind the scrolling content card */
+  z-index: 50;
 }
 
 .title {
