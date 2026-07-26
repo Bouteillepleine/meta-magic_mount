@@ -7,6 +7,7 @@ on:
     paths:
       - "src/**"
       - "template/**"
+      - "webui/**"
       - "build.sh"
       - ".github/workflows/build.yml"
   pull_request:
@@ -27,6 +28,24 @@ jobs:
         uses: mlugg/setup-zig@v2
         with:
           version: 0.14.0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: pnpm
+          cache-dependency-path: webui/pnpm-lock.yaml
+
+      - name: Build WebUI
+        working-directory: webui
+        run: |
+          pnpm install --no-frozen-lockfile
+          pnpm run build
 
       - name: Build release
         run: bash build.sh --release
