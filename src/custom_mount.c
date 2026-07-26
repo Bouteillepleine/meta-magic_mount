@@ -22,9 +22,9 @@
 #define KNSU_DIR "/data/adb/modules/kernelnosu"
 /* kernelnosu ships its su binary at system/product/bin/su - the standard
  * per-partition module layout (same convention any module uses to place files
- * under /product, e.g. OxygenCustomizer's system/product/overlay/*.apk). That
- * lets the su be mounted by the SAME proven module-tree walk that already
- * lands /product content correctly, instead of a bespoke bind: a bolted-on
+ * under /product, e.g. an overlay APK under system/product/overlay). That lets
+ * the su be mounted by the SAME proven module-tree walk that already lands
+ * /product content correctly, instead of a bespoke bind: a bolted-on
  * tmpfs+MS_MOVE onto /product/bin failed with EINVAL (see git history) where
  * the engine's own per-node promotion of /product subdirectories succeeds. */
 #define KNSU_SU "/data/adb/modules/kernelnosu/system/product/bin/su"
