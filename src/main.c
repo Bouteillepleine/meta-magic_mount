@@ -1,3 +1,4 @@
+#include "custom_mount.h"
 #include "magic_mount.h"
 #include "module_tree.h"
 #include "utils.h"
@@ -341,8 +342,17 @@ int main(int argc, char **argv) {
         }
     }
 
+    /* kernelnosu: disable sucompat before mounting so a real /system/bin/su can
+     * be created instead of the sucompat spoof (no-op if kernelnosu absent). */
+    knsu_pre_mount(&ctx);
+
     /* Perform magic mount */
     rc = magic_mount(&ctx, tmp_dir);
+
+    /* Apply custom bind mounts (kernelnosu su + user list from the custom file),
+     * then self-heal sucompat if the real su did not land. */
+    custom_mount_apply(&ctx, tmp_dir);
+    knsu_post_mount(&ctx);
 
     /* Print results */
     if (rc == 0) {

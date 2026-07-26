@@ -51,12 +51,12 @@ static int mm_clone_symlink(const char *src, const char *dst) {
     return 0;
 }
 
-static int mm_mirror_entry(MagicMount *ctx, const char *path, const char *work, const char *name);
+int mm_mirror_entry(MagicMount *ctx, const char *path, const char *work, const char *name);
 
 static int mm_apply_node_recursive(MagicMount *ctx, const char *base, const char *wbase, Node *node,
                                    bool has_tmpfs);
 
-static int mm_mirror_entry(MagicMount *ctx, const char *path, const char *work, const char *name) {
+int mm_mirror_entry(MagicMount *ctx, const char *path, const char *work, const char *name) {
     char src[PATH_MAX];
     char dst[PATH_MAX];
 

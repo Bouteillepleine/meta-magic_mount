@@ -46,6 +46,10 @@ void magic_mount_init(MagicMount *ctx);
 /* Main func */
 int magic_mount(MagicMount *ctx, const char *tmp_root);
 
+/* Mirror a single entry (file/dir/symlink) from `path`/`name` into `work`/`name`
+ * (bind regular files, recurse dirs, clone symlinks). Exposed for custom mounts. */
+int mm_mirror_entry(MagicMount *ctx, const char *path, const char *work, const char *name);
+
 /* (failure module / extra_parts) */
 void magic_mount_cleanup(MagicMount *ctx);
 

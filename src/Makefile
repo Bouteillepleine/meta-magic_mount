@@ -6,7 +6,7 @@ CC       := zig cc
 STRIPPER := strip
 
 # source files
-SRCS     := utils.c ksu.c module_tree.c magic_mount.c main.c
+SRCS     := utils.c ksu.c module_tree.c magic_mount.c custom_mount.c main.c
 
 # output directory
 OUTDIR   := bin
