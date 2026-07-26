@@ -20,11 +20,14 @@
 #define KSUD_PATH "/data/adb/ksud"
 
 #define KNSU_DIR "/data/adb/modules/kernelnosu"
-#define KNSU_SU "/data/adb/modules/kernelnosu/system/bin/su"
-/* /product/bin: already its own partition/mount on this device (so a bind mount
- * there is unremarkable), first in $PATH, and far less busy than /system/bin
- * (a handful of files vs. hundreds of constantly-exec'd binaries) - so the
- * tmpfs-move used to create a new file actually persists. */
+/* kernelnosu ships its su binary at system/product/bin/su - the standard
+ * per-partition module layout (same convention any module uses to place files
+ * under /product, e.g. OxygenCustomizer's system/product/overlay/*.apk). That
+ * lets the su be mounted by the SAME proven module-tree walk that already
+ * lands /product content correctly, instead of a bespoke bind: a bolted-on
+ * tmpfs+MS_MOVE onto /product/bin failed with EINVAL (see git history) where
+ * the engine's own per-node promotion of /product subdirectories succeeds. */
+#define KNSU_SU "/data/adb/modules/kernelnosu/system/product/bin/su"
 #define KNSU_TARGET "/product/bin/su"
 
 /* kernelnosu is installed, enabled, and ships a su binary. */
@@ -217,11 +220,12 @@ static int parse_bind_line(char *line, char **source, char **target) {
 }
 
 int custom_mount_apply(MagicMount *ctx, const char *tmp_root) {
-    /* 1) kernelnosu real su (auto) */
-    if (knsu_active())
-        do_custom_bind(ctx, KNSU_SU, KNSU_TARGET, tmp_root);
+    /* kernelnosu's su is NOT bound here: it ships at system/product/bin/su in
+     * its own module tree, so the standard build_mount_tree()/magic_mount()
+     * walk mounts it exactly like any other module's /product content. Only
+     * the sucompat pre/post hooks (knsu_pre_mount/knsu_post_mount) are ours. */
 
-    /* 2) user-defined custom bind list */
+    /* user-defined custom bind list */
     FILE *fp = fopen(CUSTOM_LIST_PATH, "r");
     if (!fp)
         return 0;
