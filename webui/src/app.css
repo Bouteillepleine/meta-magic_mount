@@ -1,179 +1,165 @@
-/* For KernelSU WebUI */
+/* KernelSU WebUI: dynamic Material You palette + safe-area insets. These
+   resolve inside the root-manager WebUI (same source the mmrs module uses),
+   so the UI matches the system Monet theme; fallbacks cover other envs. */
 @import url("https://mui.kernelsu.org/internal/insets.css");
+@import url("https://mui.kernelsu.org/internal/colors.css");
 
-/* ------- Palette (dark, default) -------
-   Kept the --nordN variable names so nothing else needs to change; the VALUES
-   now follow the KernelNoSU dark/aurora look:
-     nord0 = page bg     nord1 = card bg      nord2 = borders/lines
-     nord3 = hover surface   nord4 = muted text   nord5 = brighter muted
-     nord6 = main text   nord7 = logo gradient stop
-     nord8 = accent (primary)   nord9 = accent hover   nord10 = accent alt
-     nord11 = bad/error   nord12 = warn   nord13 = warn-alt   nord14 = ok/success
-     nord15 = tertiary (purple)
-*/
+/* ---------- Material Design 3 tokens ----------
+   The app was written against --nordN names, so those are kept but now simply
+   alias MD3 roles — nothing in the components needs to change. */
 :root {
-  --nord0: #0d0f13;
-  --nord1: #161a20;
-  --nord2: #2b323c;
-  --nord3: #333c48;
+  --md-sys-color-primary: var(--primary, #6750a4);
+  --md-sys-color-on-primary: var(--onPrimary, #fff);
+  --md-sys-color-primary-container: var(--primaryContainer, #eaddff);
+  --md-sys-color-on-primary-container: var(--onPrimaryContainer, #21005d);
+  --md-sys-color-secondary-container: var(--secondaryContainer, #e8def8);
+  --md-sys-color-on-secondary-container: var(--onSecondaryContainer, #1d192b);
+  --md-sys-color-tertiary: var(--tertiary, #7d5260);
+  --md-sys-color-background: var(--background, #fef7ff);
+  --md-sys-color-on-background: var(--onBackground, #1d1b20);
+  --md-sys-color-surface: var(--surface, #fef7ff);
+  --md-sys-color-on-surface: var(--onSurface, #1d1b20);
+  --md-sys-color-on-surface-variant: var(--onSurfaceVariant, #49454f);
+  --md-sys-color-outline-variant: var(--outlineVariant, #cac4d0);
+  --md-sys-color-surface-container-lowest: var(--surfaceContainerLowest, #fff);
+  --md-sys-color-surface-container-low: var(--surfaceContainerLow, #f7f2fa);
+  --md-sys-color-surface-container: var(--surfaceContainer, #f3edf7);
+  --md-sys-color-surface-container-high: var(--surfaceContainerHigh, #ece6f0);
+  --md-sys-color-surface-container-highest: var(--surfaceContainerHighest, #e6e0e9);
 
-  --nord4: #b3bcc9;
-  --nord5: #c7d0dc;
-  --nord6: #f4f7fb;
+  --ok: #0f9d58;
+  --warn: #c77800;
+  --bad: #d93838;
 
-  --nord7: #7aa2ff;
-  --nord8: #5b8cff;
-  --nord9: #7c9dff;
-  --nord10: #3f5fd9;
+  --elev1: 0 1px 2px rgba(0, 0, 0, 0.10), 0 1px 3px 1px rgba(0, 0, 0, 0.06);
+  --shadow: var(--elev1);
+  --mono: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --nord11: #ff6b6f;
-  --nord12: #f0a92e;
-  --nord13: #f0a92e;
-  --nord14: #3ecf7a;
-  --nord15: #b48ead;
-
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  /* nord aliases → MD3 roles */
+  --nord0: var(--md-sys-color-background);
+  --nord1: var(--md-sys-color-surface-container-low);
+  --nord2: var(--md-sys-color-outline-variant);
+  --nord3: var(--md-sys-color-surface-container-high);
+  --nord4: var(--md-sys-color-on-surface-variant);
+  --nord5: var(--md-sys-color-on-surface-variant);
+  --nord6: var(--md-sys-color-on-surface);
+  --nord7: var(--md-sys-color-primary);
+  --nord8: var(--md-sys-color-primary);
+  --nord9: var(--md-sys-color-primary);
+  --nord10: var(--md-sys-color-primary);
+  --nord11: var(--bad);
+  --nord12: var(--warn);
+  --nord13: var(--warn);
+  --nord14: var(--ok);
+  --nord15: var(--md-sys-color-tertiary);
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --nord0: #f4f5f7;
-    --nord1: #ffffff;
-    --nord2: #e6e8ec;
-    --nord3: #eef1f6;
+    --md-sys-color-primary: var(--primary, #d0bcff);
+    --md-sys-color-on-primary: var(--onPrimary, #381e72);
+    --md-sys-color-primary-container: var(--primaryContainer, #4f378b);
+    --md-sys-color-on-primary-container: var(--onPrimaryContainer, #eaddff);
+    --md-sys-color-secondary-container: var(--secondaryContainer, #4a4458);
+    --md-sys-color-on-secondary-container: var(--onSecondaryContainer, #e8def8);
+    --md-sys-color-tertiary: var(--tertiary, #efb8c8);
+    --md-sys-color-background: var(--background, #141218);
+    --md-sys-color-on-background: var(--onBackground, #e6e0e9);
+    --md-sys-color-surface: var(--surface, #141218);
+    --md-sys-color-on-surface: var(--onSurface, #e6e0e9);
+    --md-sys-color-on-surface-variant: var(--onSurfaceVariant, #cac4d0);
+    --md-sys-color-outline-variant: var(--outlineVariant, #49454f);
+    --md-sys-color-surface-container-lowest: var(--surfaceContainerLowest, #0f0d13);
+    --md-sys-color-surface-container-low: var(--surfaceContainerLow, #1d1b20);
+    --md-sys-color-surface-container: var(--surfaceContainer, #211f26);
+    --md-sys-color-surface-container-high: var(--surfaceContainerHigh, #2b2930);
+    --md-sys-color-surface-container-highest: var(--surfaceContainerHighest, #36343b);
 
-    --nord4: #6b7280;
-    --nord5: #4c566a;
-    --nord6: #14171c;
-
-    --nord7: #7aa2ff;
-    --nord8: #2f6bff;
-    --nord9: #4c82ff;
-    --nord10: #2354d6;
-
-    --nord11: #e5484d;
-    --nord12: #d68309;
-    --nord13: #d68309;
-    --nord14: #12a150;
-    --nord15: #b48ead;
-
-    --shadow: 0 1px 2px rgba(20, 23, 28, 0.06), 0 6px 20px rgba(20, 23, 28, 0.06);
+    --ok: #5fdd9d;
+    --warn: #f0b849;
+    --bad: #ff6b6f;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 }
 
-/* ---------- Base Layout ---------- */
+/* ---------- Base ---------- */
 * {
   box-sizing: border-box;
-}
-
-html {
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
   padding-top: var(--window-inset-top, 0px);
-  padding-bottom: var(--window-inset-bottom, 0px);
   margin: 0;
-  color: var(--nord6);
-  background: var(--nord0);
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "SF Pro Text",
-    Inter, system-ui, sans-serif;
+  color: var(--md-sys-color-on-background);
+  background: var(--md-sys-color-background);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 .app-root {
   display: flex;
   flex-direction: column;
-  height: calc(
-    100vh - var(--window-inset-top, 0px) - var(--window-inset-bottom, 0px)
-  );
-  max-width: 640px;
+  height: calc(100vh - var(--window-inset-top, 0px));
+  max-width: 800px;
   margin: 0 auto;
   position: relative;
 }
 
-/* Aurora background, matching KernelNoSU: fixed, blurred radial gradients
-   drifting slowly behind everything. Pure CSS, no JS needed. */
-.app-root::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  filter: blur(60px) saturate(1.15);
-  opacity: 0.42;
-  will-change: transform;
-  background:
-    radial-gradient(38% 30% at 20% 12%, color-mix(in srgb, var(--nord8) 65%, transparent), transparent 70%),
-    radial-gradient(32% 28% at 85% 8%, color-mix(in srgb, var(--nord14) 48%, transparent), transparent 70%),
-    radial-gradient(44% 40% at 60% 96%, color-mix(in srgb, var(--nord8) 40%, transparent), transparent 72%);
-  animation: drift 22s ease-in-out infinite alternate;
-}
-
-@media (prefers-color-scheme: light) {
-  .app-root::before {
-    opacity: 0.5;
-  }
-}
-
-@keyframes drift {
-  from { transform: translate3d(-3%, -2%, 0); }
-  to { transform: translate3d(3%, 3%, 0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .app-root::before {
-    animation: none;
-  }
-}
-
-/* Top bar for title + language selector */
+/* ---------- Top app bar ---------- */
 .top-bar {
-  height: 52px;
+  height: 56px;
   display: flex;
   align-items: center;
   padding: 0 16px;
-  background: transparent;
-  border-bottom: 1px solid var(--nord2);
+  background: var(--md-sys-color-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
   position: relative;
   z-index: 1;
 }
 
-/* Language dropdown container */
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  letter-spacing: -0.2px;
+}
+
+/* Language dropdown */
 .lang-dropdown {
   position: relative;
   margin-left: auto;
 }
 
 .lang-select {
-  padding: 6px 12px;
-  border-radius: 11px;
-  border: 1px solid var(--nord2);
-  background: var(--nord1);
-  color: var(--nord6);
+  padding: 8px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
   font-size: 13px;
   outline: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 100px;
+  min-width: 104px;
   justify-content: space-between;
-  transition: 0.15s;
-  box-shadow: var(--shadow);
+  transition: background 0.2s;
+  box-shadow: none;
 }
 
-.lang-select:hover {
-  border-color: var(--nord8);
+.lang-select:active {
+  background: var(--md-sys-color-surface-container-high);
 }
 
 .lang-select .arrow {
   font-size: 10px;
   transition: transform 0.2s;
   display: inline-block;
-  color: var(--nord4);
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .lang-select .arrow.open {
@@ -182,163 +168,137 @@ body {
 
 .lang-menu {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 6px);
   right: 0;
-  background: var(--nord1);
-  border: 1px solid var(--nord2);
-  border-radius: 11px;
+  background: var(--md-sys-color-surface-container-high);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  min-width: 100px;
+  box-shadow: var(--elev1);
+  min-width: 120px;
   z-index: 1000;
+  padding: 6px;
 }
 
 .lang-option {
   width: 100%;
-  padding: 10px 16px;
+  padding: 10px 14px;
   border: none;
   background: transparent;
-  color: var(--nord6);
+  color: var(--md-sys-color-on-surface);
   text-align: left;
   cursor: pointer;
   font-size: 13px;
   transition: 0.15s;
   display: block;
+  border-radius: 10px;
+  box-shadow: none;
 }
 
-.lang-option:hover {
-  background: var(--nord3);
+.lang-option:active {
+  background: var(--md-sys-color-surface-container-highest);
 }
 
 .lang-option.active {
-  background: var(--nord8);
-  color: #fff;
-  font-weight: 650;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-weight: 600;
 }
 
-/* Main content */
+/* ---------- Main ---------- */
 .app-main {
   flex: 1;
-  padding: 16px 16px 64px;
+  padding: 16px 16px calc(88px + var(--window-inset-bottom, 0px));
   overflow-y: auto;
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 /* ---------- Card ---------- */
 .card {
-  background: var(--nord1);
-  border: 1px solid var(--nord2);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: var(--shadow);
+  background: var(--md-sys-color-surface-container-low);
+  border: none;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: var(--elev1);
   position: relative;
-  overflow: hidden;
-}
-
-/* ---------- Sheen: a soft highlight glides across the card with device tilt
-   or pointer position, same effect as the KernelNoSU module WebUI. No card
-   rotation (so scrolling stays fluid and layout never shifts) - just a
-   radial highlight tracked via --gx/--gy, set from App.svelte. ---------- */
-.card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s;
-  background: radial-gradient(
-    180px 180px at var(--gx, 50%) var(--gy, 0%),
-    rgba(255, 255, 255, 0.13),
-    transparent 60%
-  );
-}
-
-.sheen .card::after {
-  opacity: 1;
 }
 
 .card h2 {
   margin-top: 0;
-  margin-bottom: 12px;
-  color: var(--nord6);
-  font-size: 16px;
-  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--md-sys-color-on-surface);
+  font-size: 18px;
+  font-weight: 600;
   letter-spacing: -0.2px;
 }
 
 /* ---------- Form fields ---------- */
 .field {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .field label,
 .field .field-label {
-  font-size: 12.5px;
-  color: var(--nord4);
-  font-weight: 600;
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-weight: 500;
 }
 
 input,
 select {
-  padding: 9px 12px;
-  border-radius: 11px;
-  border: 1px solid var(--nord2);
-  background: var(--nord0);
-  color: var(--nord6);
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
   font-size: 14px;
   outline: none;
   transition: 0.15s;
 }
 
 input::placeholder {
-  color: var(--nord4);
+  color: var(--md-sys-color-on-surface-variant);
   opacity: 0.7;
 }
 
 input:focus,
 select:focus {
-  border-color: var(--nord8);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nord8) 22%, transparent);
+  border-color: var(--md-sys-color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
 }
 
-/* ---------- Buttons ---------- */
+/* ---------- Buttons (MD3: flat, pill) ---------- */
 button {
   border: none;
-  border-radius: 12px;
-  padding: 10px 16px;
-  background: var(--nord3);
-  color: var(--nord6);
+  border-radius: 100px;
+  padding: 12px 20px;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
   cursor: pointer;
   font-size: 14px;
-  font-weight: 650;
-  transition: 0.12s;
-  box-shadow: 0 3px 0 color-mix(in srgb, var(--nord6) 14%, transparent),
-    0 7px 16px rgba(0, 0, 0, 0.16);
-}
-
-button:hover {
-  background: var(--nord2);
+  font-weight: 600;
+  transition: filter 0.15s, transform 0.1s, background 0.2s;
+  box-shadow: none;
 }
 
 button:active {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--nord6) 14%, transparent);
+  transform: scale(0.98);
 }
 
 button.primary {
-  background: linear-gradient(145deg, var(--nord8), var(--nord9));
-  color: #fff;
-  box-shadow: 0 4px 0 color-mix(in srgb, var(--nord8) 55%, #000),
-    0 9px 20px color-mix(in srgb, var(--nord8) 38%, transparent);
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
 }
 
-button.primary:hover {
-  filter: brightness(1.05);
+button.primary:active {
+  filter: brightness(1.08);
 }
 
 button:disabled {
@@ -347,13 +307,13 @@ button:disabled {
   transform: none;
 }
 
-/* ---------- Actions (centered) ---------- */
+/* ---------- Actions ---------- */
 .actions {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-top: 16px;
-  margin-bottom: 8px;
+  gap: 12px;
+  margin-top: 18px;
+  margin-bottom: 4px;
 }
 
 .actions button {
@@ -362,115 +322,79 @@ button:disabled {
 
 /* ---------- Text helpers ---------- */
 .hint {
-  font-size: 12.5px;
-  color: var(--nord4);
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant);
   margin: 4px 0 8px;
 }
 
 .error {
-  font-size: 12.5px;
-  color: var(--nord11);
+  font-size: 13px;
+  color: var(--bad);
   margin-top: 4px;
   font-weight: 600;
 }
 
 .path {
-  font-size: 11.5px;
-  color: var(--nord4);
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
   margin-top: 4px;
+  font-family: var(--mono);
 }
 
 /* ---------- Log viewer ---------- */
 .log-view {
   margin-top: 12px;
-  padding: 12px 13px;
-  background: var(--nord0);
-  border-radius: 12px;
-  border: 1px solid var(--nord2);
-  color: var(--nord5);
+  padding: 14px;
+  background: var(--md-sys-color-surface-container-highest);
+  border-radius: 16px;
+  border: none;
+  color: var(--md-sys-color-on-surface-variant);
   max-height: 55vh;
   overflow-y: auto;
   font-size: 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   text-align: left;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
-/* ---------- Bottom Tabs (floating glass capsule) ----------
-   Same recipe as the ReSukiSU manager's capsule bar: translucent body (not an
-   opaque surface) + backdrop blur + a soft rim gradient border + an inner
-   sheen highlight along the top edge, so it reads as glass rather than a flat
-   solid bar. Unlike the native manager, backdrop-filter is plain CSS here -
-   the WebView supports it directly, no extra enablement needed. */
-/* ---------- KSU-Next "liquid" floating bar ----------
-   A detached glass capsule with a springy pill that glides between tabs
-   (and can be dragged). Ported from KernelSU-Next's FloatingBottomBar:
-   24px capsule, a bright top-fading rim, an inner top sheen, a translucent
-   body, and a secondary-tinted pill indicator. --n = tab count, --i =
-   active index; both are set inline from App.svelte. */
+/* ---------- Bottom navigation (MD3 solid bar, fluid primary pill) ----------
+   Clean native bar like the mmrs module: a solid surface pinned to the bottom
+   with a top divider. The active tab sits inside a primary-container pill that
+   spring-slides between tabs (--n = tab count, --i = active index, set inline
+   from App.svelte). */
 .bottom-bar {
   position: fixed;
-  bottom: calc(var(--window-inset-bottom, 0px) + 14px);
   left: 50%;
   transform: translateX(-50%);
-  width: min(560px, calc(100% - 28px));
-  height: 66px;
+  bottom: 0;
+  width: 100%;
+  max-width: 800px;
   display: flex;
-  gap: 6px;
-  padding: 7px;
+  gap: 4px;
+  padding: 8px 8px calc(8px + var(--window-inset-bottom, 0px));
   z-index: 2;
-  border-radius: 24px;
-  background: color-mix(in srgb, var(--nord1) 72%, transparent);
-  backdrop-filter: blur(26px) saturate(1.7);
-  -webkit-backdrop-filter: blur(26px) saturate(1.7);
-  border: 1px solid color-mix(in srgb, #fff 20%, transparent);
-  box-shadow:
-    0 12px 34px rgba(0, 0, 0, 0.5),
-    0 3px 10px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 color-mix(in srgb, #fff 26%, transparent);
-  overflow: hidden;
+  background: var(--md-sys-color-surface);
+  border-top: 1px solid var(--md-sys-color-outline-variant);
 }
 
-/* bright rim that fades top→bottom, like the Compose glassRim gradient */
-.bottom-bar::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, #fff 14%, transparent),
-    color-mix(in srgb, #fff 3%, transparent) 45%,
-    transparent 70%
-  );
-}
-
-/* the sliding pill — springs between tabs (overshoot bezier = bouncy spring) */
 .tab-pill {
   position: absolute;
-  top: 7px;
-  bottom: 7px;
-  left: 7px;
-  z-index: 1;
-  width: calc(
-    (100% - 14px - (var(--n, 3) - 1) * 6px) / var(--n, 3)
-  );
-  transform: translateX(calc(var(--i, 0) * (100% + 6px)));
-  border-radius: 17px;
-  background: color-mix(in srgb, var(--nord8) 24%, transparent);
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--nord8) 42%, transparent),
-    inset 0 1px 0 color-mix(in srgb, #fff 22%, transparent),
-    0 2px 8px color-mix(in srgb, var(--nord8) 30%, transparent);
-  transition: transform 0.42s cubic-bezier(0.34, 1.42, 0.5, 1);
+  top: 8px;
+  height: 48px;
+  left: 8px;
+  z-index: 0;
+  width: calc((100% - 16px - (var(--n, 3) - 1) * 4px) / var(--n, 3));
+  transform: translateX(calc(var(--i, 0) * (100% + 4px)));
+  border-radius: 16px;
+  background: var(--md-sys-color-primary-container);
+  transition: transform 0.38s cubic-bezier(0.34, 1.42, 0.5, 1);
   pointer-events: none;
 }
 
 .bottom-bar.dragging .tab-pill {
   transition: transform 0.14s ease-out;
-  transform: translateX(calc(var(--i, 0) * (100% + 6px))) scale(1.08);
+  transform: translateX(calc(var(--i, 0) * (100% + 4px))) scale(1.04);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -481,15 +405,18 @@ button:disabled {
 
 .tab-btn {
   flex: 1;
+  height: 48px;
   background: transparent;
   border: 0;
-  border-radius: 17px;
+  border-radius: 16px;
   margin: 0;
-  color: var(--nord4);
-  font-weight: 650;
+  padding: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-weight: 600;
+  font-size: 14px;
   box-shadow: none;
   position: relative;
-  z-index: 2;
+  z-index: 1;
   transition: color 0.2s ease;
 }
 
@@ -499,34 +426,33 @@ button:disabled {
 
 .tab-btn.active {
   background: transparent;
-  color: var(--nord8);
-  box-shadow: none;
+  color: var(--md-sys-color-on-primary-container);
 }
 
-/* ---------- loglevel Switch (segmented control) ---------- */
+/* ---------- loglevel segmented control (MD3) ---------- */
 .loglevel-switch {
   display: flex;
   width: 100%;
   overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid var(--nord2);
-  background: var(--nord0);
-  padding: 3px;
-  gap: 3px;
+  border-radius: 100px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container);
+  padding: 4px;
+  gap: 4px;
 }
 
 .lv-btn {
   flex: 1;
-  padding: 9px 0;
+  padding: 10px 0;
   text-align: center;
   background: transparent;
-  color: var(--nord4);
+  color: var(--md-sys-color-on-surface-variant);
   border: none;
   cursor: pointer;
   transition: 0.15s;
   font-size: 13.5px;
-  font-weight: 650;
-  border-radius: 9px;
+  font-weight: 600;
+  border-radius: 100px;
   box-shadow: none;
 }
 
@@ -534,14 +460,10 @@ button:disabled {
   transform: none;
 }
 
-.lv-btn:hover {
-  color: var(--nord6);
-}
-
 .lv-btn.active {
-  background: var(--nord8);
-  color: #fff;
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--nord8) 45%, transparent);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  box-shadow: none;
 }
 
 /* ---------- Log select row ---------- */
@@ -556,26 +478,18 @@ button:disabled {
 }
 
 .refresh-btn {
-  padding: 9px 14px;
+  padding: 12px 16px;
   white-space: nowrap;
 }
 
-/* top bar title */
-.title {
-  font-size: 17px;
-  font-weight: 750;
-  color: var(--nord6);
-  letter-spacing: -0.2px;
-}
-
-/* module row */
+/* ---------- Module rows ---------- */
 .module-list {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .module-row {
-  padding: 12px 4px;
-  border-top: 1px solid var(--nord2);
+  padding: 14px 4px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .module-row:first-child {
@@ -590,20 +504,21 @@ button:disabled {
 }
 
 .module-name {
-  font-size: 14.5px;
+  font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: 1;
+  color: var(--md-sys-color-on-surface);
 }
 
-/* switch slider (module enable/disable toggle) */
+/* ---------- MD3 switch (module enable/disable) ---------- */
 .switch {
   position: relative;
   display: inline-block;
   flex: 0 0 auto;
-  width: 46px;
-  height: 28px;
+  width: 52px;
+  height: 32px;
 }
 
 .switch input {
@@ -616,49 +531,48 @@ button:disabled {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--nord2);
-  transition: 0.18s;
+  inset: 0;
+  background-color: var(--md-sys-color-surface-container-highest);
+  transition: 0.2s;
   border-radius: 999px;
-  border: 1px solid var(--nord2);
+  border: 2px solid var(--md-sys-color-on-surface-variant);
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 22px;
-  width: 22px;
-  left: 2px;
-  bottom: 2px;
-  background-color: #fff;
-  transition: 0.18s;
+  height: 16px;
+  width: 16px;
+  left: 6px;
+  bottom: 6px;
+  background-color: var(--md-sys-color-on-surface-variant);
+  transition: 0.2s;
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: none;
 }
 
 input:checked + .slider {
-  background-color: var(--nord14);
-  border-color: transparent;
+  background-color: var(--md-sys-color-primary);
+  border-color: var(--md-sys-color-primary);
 }
 
 input:checked + .slider:before {
-  transform: translateX(18px);
+  height: 24px;
+  width: 24px;
+  left: 22px;
+  bottom: 2px;
+  background-color: var(--md-sys-color-on-primary);
 }
 
-/* disabled */
 .switch.disabled {
   opacity: 0.4;
   pointer-events: none;
 }
 
-/* smaller error text */
 .error.small {
   font-size: 12px;
   margin-left: auto;
-  color: var(--nord11);
+  color: var(--bad);
 }
 
 /* ---------- Tab switching overlay ---------- */
@@ -670,24 +584,19 @@ input:checked + .slider:before {
   justify-content: center;
   z-index: 10;
   pointer-events: none;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(2px);
+  background: color-mix(in srgb, var(--md-sys-color-background) 45%, transparent);
 }
 
 .tab-spinner {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.25);
-  border-top-color: var(--nord8);
+  border: 3px solid var(--md-sys-color-surface-container-highest);
+  border-top-color: var(--md-sys-color-primary);
   animation: tab-spin 0.6s linear infinite;
 }
 
 @keyframes tab-spin {
-  from {
-    transform: rotate(0deg) scale(0.9);
-  }
-  to {
-    transform: rotate(360deg) scale(1);
-  }
+  from { transform: rotate(0deg) scale(0.9); }
+  to { transform: rotate(360deg) scale(1); }
 }
