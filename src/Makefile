@@ -66,7 +66,7 @@ strip-bins:
 	@echo "Stripping binaries..."
 	@for bin in $(BINS); do \
 		echo "  Stripping $$bin"; \
-		$(STRIPPER) $$bin; \
+		$(STRIPPER) $$bin 2>/dev/null || echo "    (already stripped by -s or cross-arch strip unavailable, skipping)"; \
 	done
 
 amd64: $(BIN_AMD64)
