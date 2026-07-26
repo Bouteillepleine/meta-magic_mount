@@ -234,13 +234,36 @@ body {
 /* ---------- Main ---------- */
 .app-main {
   flex: 1;
-  padding: 16px 16px calc(88px + var(--window-inset-bottom, 0px));
+  /* bottom clearance must exceed the floating nav's footprint
+     (8+54+8 capsule + 12 gap + inset ~= 94px) so the last card content
+     (e.g. Config's Reload/Save row) is never hidden behind it */
+  padding: 16px 16px calc(112px + var(--window-inset-bottom, 0px));
   overflow-y: auto;
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+/* ---------- small MD3 tonal chip (module state, counts) ---------- */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.tag.ok {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 15%, var(--md-sys-color-surface-container-high));
+}
+.tag.mut {
+  color: var(--md-sys-color-on-surface-variant);
+  background: var(--md-sys-color-surface-container-high);
 }
 
 /* ---------- Card ---------- */
@@ -260,6 +283,9 @@ body {
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ---------- Form fields ---------- */
@@ -536,7 +562,9 @@ button:disabled {
 .lv-btn.active {
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
-  box-shadow: none;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent),
+    0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 /* ---------- Log select row ---------- */
@@ -576,12 +604,21 @@ button:disabled {
   gap: 10px;
 }
 
+.module-name-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
 .module-name {
   font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
+  max-width: 100%;
   color: var(--md-sys-color-on-surface);
 }
 

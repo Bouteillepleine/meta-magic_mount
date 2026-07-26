@@ -53,7 +53,14 @@
 </script>
 
 <div class="card" in:fade={{ duration: 180 }}>
-  <h2>{$L.modules.title}</h2>
+  <h2>
+    {$L.modules.title}
+    {#if !loading && modules.length}
+      <span class="tag ok" style="margin-left:auto"
+        >{modules.filter((m) => !m.skipMount).length}/{modules.length} mounted</span
+      >
+    {/if}
+  </h2>
   <p class="path">{$L.modules.basePath}: {moduleDir}</p>
 
   {#if error}<p class="error">{error}</p>{/if}
@@ -67,7 +74,12 @@
     {#each modules as m (m.name)}
       <div class="module-row">
         <div class="module-info">
-          <span class="module-name">{m.name}</span>
+          <div class="module-name-wrap">
+            <span class="module-name">{m.name}</span>
+            <span class="tag {m.skipMount ? 'mut' : 'ok'}"
+              >{m.skipMount ? "skipped" : "mounted"}</span
+            >
+          </div>
           <label class="switch" class:disabled={m.disabledByFlag}>
             <input
               type="checkbox"
