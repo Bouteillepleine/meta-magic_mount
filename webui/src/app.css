@@ -403,24 +403,36 @@ button:disabled {
    sheen highlight along the top edge, so it reads as glass rather than a flat
    solid bar. Unlike the native manager, backdrop-filter is plain CSS here -
    the WebView supports it directly, no extra enablement needed. */
+/* ---------- KSU-Next "liquid" floating bar ----------
+   A detached glass capsule with a springy pill that glides between tabs
+   (and can be dragged). Ported from KernelSU-Next's FloatingBottomBar:
+   24px capsule, a bright top-fading rim, an inner top sheen, a translucent
+   body, and a secondary-tinted pill indicator. --n = tab count, --i =
+   active index; both are set inline from App.svelte. */
 .bottom-bar {
   position: fixed;
-  bottom: calc(var(--window-inset-bottom, 0px) + 10px);
+  bottom: calc(var(--window-inset-bottom, 0px) + 14px);
   left: 50%;
   transform: translateX(-50%);
-  width: min(600px, calc(100% - 24px));
-  height: 60px;
+  width: min(560px, calc(100% - 28px));
+  height: 66px;
   display: flex;
+  gap: 6px;
+  padding: 7px;
   z-index: 2;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--nord1) 62%, transparent);
-  backdrop-filter: blur(22px) saturate(1.6);
-  -webkit-backdrop-filter: blur(22px) saturate(1.6);
-  border: 1px solid color-mix(in srgb, var(--nord6) 14%, transparent);
-  box-shadow: var(--shadow), 0 10px 28px rgba(0, 0, 0, 0.3);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--nord1) 72%, transparent);
+  backdrop-filter: blur(26px) saturate(1.7);
+  -webkit-backdrop-filter: blur(26px) saturate(1.7);
+  border: 1px solid color-mix(in srgb, #fff 20%, transparent);
+  box-shadow:
+    0 12px 34px rgba(0, 0, 0, 0.5),
+    0 3px 10px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 color-mix(in srgb, #fff 26%, transparent);
   overflow: hidden;
 }
 
+/* bright rim that fades top→bottom, like the Compose glassRim gradient */
 .bottom-bar::before {
   content: "";
   position: absolute;
@@ -430,20 +442,55 @@ button:disabled {
   background: linear-gradient(
     180deg,
     color-mix(in srgb, #fff 14%, transparent),
-    transparent 55%
+    color-mix(in srgb, #fff 3%, transparent) 45%,
+    transparent 70%
   );
+}
+
+/* the sliding pill — springs between tabs (overshoot bezier = bouncy spring) */
+.tab-pill {
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: 7px;
+  z-index: 1;
+  width: calc(
+    (100% - 14px - (var(--n, 3) - 1) * 6px) / var(--n, 3)
+  );
+  transform: translateX(calc(var(--i, 0) * (100% + 6px)));
+  border-radius: 17px;
+  background: color-mix(in srgb, var(--nord8) 24%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--nord8) 42%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 22%, transparent),
+    0 2px 8px color-mix(in srgb, var(--nord8) 30%, transparent);
+  transition: transform 0.42s cubic-bezier(0.34, 1.42, 0.5, 1);
+  pointer-events: none;
+}
+
+.bottom-bar.dragging .tab-pill {
+  transition: transform 0.14s ease-out;
+  transform: translateX(calc(var(--i, 0) * (100% + 6px))) scale(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-pill {
+    transition: transform 0.12s linear;
+  }
 }
 
 .tab-btn {
   flex: 1;
   background: transparent;
-  border-radius: 14px;
-  margin: 6px;
+  border: 0;
+  border-radius: 17px;
+  margin: 0;
   color: var(--nord4);
   font-weight: 650;
   box-shadow: none;
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  transition: color 0.2s ease;
 }
 
 .tab-btn:active {
@@ -451,9 +498,9 @@ button:disabled {
 }
 
 .tab-btn.active {
-  background: color-mix(in srgb, var(--nord8) 22%, transparent);
+  background: transparent;
   color: var(--nord8);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--nord8) 40%, transparent);
+  box-shadow: none;
 }
 
 /* ---------- loglevel Switch (segmented control) ---------- */
