@@ -21,7 +21,11 @@
 
 #define KNSU_DIR "/data/adb/modules/kernelnosu"
 #define KNSU_SU "/data/adb/modules/kernelnosu/system/bin/su"
-#define KNSU_TARGET "/system/bin/su"
+/* /product/bin: already its own partition/mount on this device (so a bind mount
+ * there is unremarkable), first in $PATH, and far less busy than /system/bin
+ * (a handful of files vs. hundreds of constantly-exec'd binaries) - so the
+ * tmpfs-move used to create a new file actually persists. */
+#define KNSU_TARGET "/product/bin/su"
 
 /* kernelnosu is installed, enabled, and ships a su binary. */
 static bool knsu_active(void) {
