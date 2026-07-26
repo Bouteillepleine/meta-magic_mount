@@ -29,6 +29,11 @@
  * the engine's own per-node promotion of /product subdirectories succeeds. */
 #define KNSU_SU "/data/adb/modules/kernelnosu/system/product/bin/su"
 #define KNSU_TARGET "/product/bin/su"
+/* The directory the engine actually promotes/moves into place for a net-new
+ * file (see mm_apply_node_recursive's DIRECTORY case) - registering THIS path
+ * for try-umount, not just the file, matches how the engine itself registers
+ * a promoted directory. */
+#define KNSU_MOUNT_DIR "/product/bin"
 
 /* kernelnosu is installed, enabled, and ships a su binary. */
 static bool knsu_active(void) {
@@ -263,6 +268,19 @@ void knsu_post_mount(MagicMount *ctx) {
     if (stat(KNSU_TARGET, &mounted) == 0 && stat(KNSU_SU, &source) == 0 &&
         mounted.st_size == source.st_size) {
         LOGI("kernelnosu: real su active at %s", KNSU_TARGET);
+        /* Register the promoted /product/bin mount for KSU's per-app
+         * try-umount, REGARDLESS of the global mm.conf umount= setting: that
+         * setting is intentionally off so KSU doesn't umount every module's
+         * mounts (which broke some modules on this device), but susfs's
+         * add_sus_path hiding for non-su app processes only takes effect for
+         * mounts actually registered this way - add_sus_path alone (called
+         * from kernelnosu's own harden.sh) flags the inode but has nothing to
+         * trigger on without this registration. */
+        if (ksu_send_unmountable(KNSU_MOUNT_DIR) == 0)
+            LOGI("kernelnosu: registered %s for try-umount (hidden from non-su apps)",
+                 KNSU_MOUNT_DIR);
+        else
+            LOGW("kernelnosu: failed to register %s for try-umount", KNSU_MOUNT_DIR);
     } else {
         LOGW("kernelnosu: real su did not land, restoring sucompat fallback");
         set_sucompat(true);
