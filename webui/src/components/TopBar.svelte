@@ -18,7 +18,11 @@
 <svelte:window on:click={handleClickOutside} />
 
 <div class="top-bar">
-  <div class="title">Magic Mount</div>
+  <div class="top-logo">M</div>
+  <div class="top-titles">
+    <div class="title">Magic Mount</div>
+    <div class="top-sub">systemless module mounting</div>
+  </div>
   <div class="lang-dropdown">
     <button
       type="button"

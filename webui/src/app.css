@@ -108,12 +108,12 @@ body {
   position: relative;
 }
 
-/* ---------- Top app bar ---------- */
+/* ---------- Top app bar (logo + title/subtitle, like the KernelNoSU header) ---------- */
 .top-bar {
-  height: 56px;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  gap: 12px;
+  padding: 12px 16px;
   background: var(--md-sys-color-surface);
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
   position: relative;
@@ -122,11 +122,35 @@ body {
   z-index: 50;
 }
 
+.top-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-weight: 800;
+  font-size: 17px;
+}
+
+.top-titles {
+  min-width: 0;
+}
+
 .title {
   font-size: 20px;
   font-weight: 600;
   color: var(--md-sys-color-on-surface);
   letter-spacing: -0.2px;
+  line-height: 1.1;
+}
+
+.top-sub {
+  font-size: 12.5px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: 1px;
 }
 
 /* Language dropdown */
@@ -360,43 +384,69 @@ button:disabled {
   overflow-wrap: anywhere;
 }
 
-/* ---------- Bottom navigation (MD3 solid bar, fluid primary pill) ----------
-   Clean native bar like the mmrs module: a solid surface pinned to the bottom
-   with a top divider. The active tab sits inside a primary-container pill that
-   spring-slides between tabs (--n = tab count, --i = active index, set inline
-   from App.svelte). */
+/* ---------- KSU-Next "liquid" floating nav (glassy capsule + sliding pill) ----------
+   Same as the KernelNoSU module: a detached glass capsule (translucent body +
+   backdrop blur + bright rim + inner sheen) floating above the gesture area,
+   with a primary-tinted pill that spring-glides between the icon+label tabs
+   and can be dragged. --n = tab count, --i = active index (set from App.svelte). */
 .bottom-bar {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 0;
-  width: 100%;
-  max-width: 800px;
+  bottom: calc(var(--window-inset-bottom, 0px) + 12px);
+  width: min(560px, calc(100% - 24px));
   display: flex;
-  gap: 4px;
-  padding: 8px 8px calc(8px + var(--window-inset-bottom, 0px));
+  gap: 6px;
+  padding: 8px;
   z-index: 2;
-  background: var(--md-sys-color-surface);
-  border-top: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 28px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 72%, transparent);
+  backdrop-filter: blur(26px) saturate(1.7);
+  -webkit-backdrop-filter: blur(26px) saturate(1.7);
+  border: 1px solid color-mix(in srgb, #fff 18%, transparent);
+  box-shadow:
+    0 12px 34px rgba(0, 0, 0, 0.5),
+    0 3px 10px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 color-mix(in srgb, #fff 24%, transparent);
+}
+
+/* bright rim fading top->bottom, like the Compose glassRim gradient */
+.bottom-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #fff 14%, transparent),
+    color-mix(in srgb, #fff 3%, transparent) 45%,
+    transparent 70%
+  );
 }
 
 .tab-pill {
   position: absolute;
   top: 8px;
-  height: 48px;
+  height: 54px;
   left: 8px;
   z-index: 0;
-  width: calc((100% - 16px - (var(--n, 3) - 1) * 4px) / var(--n, 3));
-  transform: translateX(calc(var(--i, 0) * (100% + 4px)));
-  border-radius: 16px;
-  background: var(--md-sys-color-primary-container);
-  transition: transform 0.38s cubic-bezier(0.34, 1.42, 0.5, 1);
+  width: calc((100% - 16px - (var(--n, 3) - 1) * 6px) / var(--n, 3));
+  transform: translateX(calc(var(--i, 0) * (100% + 6px)));
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--md-sys-color-primary-container) 80%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 22%, transparent),
+    0 2px 10px color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent);
+  transition: transform 0.42s cubic-bezier(0.34, 1.42, 0.5, 1);
   pointer-events: none;
 }
 
 .bottom-bar.dragging .tab-pill {
   transition: transform 0.14s ease-out;
-  transform: translateX(calc(var(--i, 0) * (100% + 4px))) scale(1.04);
+  transform: translateX(calc(var(--i, 0) * (100% + 6px))) scale(1.06);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -407,19 +457,36 @@ button:disabled {
 
 .tab-btn {
   flex: 1;
-  height: 48px;
+  height: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   background: transparent;
   border: 0;
-  border-radius: 16px;
+  border-radius: 20px;
   margin: 0;
   padding: 0;
   color: var(--md-sys-color-on-surface-variant);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 11px;
   box-shadow: none;
   position: relative;
   z-index: 1;
   transition: color 0.2s ease;
+}
+
+.tab-btn .ic {
+  display: grid;
+  place-items: center;
+  transition: transform 0.2s;
+}
+
+.tab-btn .ic svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
 }
 
 .tab-btn:active {
@@ -429,6 +496,10 @@ button:disabled {
 .tab-btn.active {
   background: transparent;
   color: var(--md-sys-color-on-primary-container);
+}
+
+.tab-btn.active .ic {
+  transform: scale(1.04);
 }
 
 /* ---------- loglevel segmented control (MD3) ---------- */
