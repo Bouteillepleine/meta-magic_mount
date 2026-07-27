@@ -6,22 +6,19 @@
   import TopBar from "@comp/TopBar.svelte";
   import ConfigView from "@comp/ConfigView.svelte";
   import ModulesView from "@comp/ModulesView.svelte";
-  import LogsView from "@comp/LogsView.svelte";
 
   // Tabs
   const tabs = {
     config: { component: ConfigView, label: "tabs.config" }, // label 为 locate key
     module: { component: ModulesView, label: "tabs.modules" },
-    log: { component: LogsView, label: "tabs.logs" },
   };
 
-  // MD3 icons for the nav (config=tune, module=extension, log=article)
+  // MD3 icons for the nav (config=tune, module=extension)
   const ICONS = {
     config:
       "M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z",
     module:
       "M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V22c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V24H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z",
-    log: "M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z",
   };
 
   const tabKeys = Object.keys(tabs);
